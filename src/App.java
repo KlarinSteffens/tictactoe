@@ -7,6 +7,7 @@ import java.net.*;
 import java.security.*;
 import java.awt.AWTException;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.*;
 import java.io.BufferedInputStream;
@@ -36,7 +37,9 @@ public class App{
         JComboBox selectConnectionType = new JComboBox<String>(connectionChoices);
         selectConnectionTypePanel.add(selectConnectionType);
         JTextField ipAddressInput = new JTextField();
+        ipAddressInput.setPreferredSize(new Dimension(40, 40));
         JTextField portAddressInput = new JTextField();
+        portAddressInput.setPreferredSize(new Dimension(40, 40));
         JButton connect = new JButton("");
         JLabel connectionInfo = new JLabel("Test TEst TEst");
         selectConnectionType.addItemListener(new ItemListener() {
