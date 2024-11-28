@@ -1,0 +1,12 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "e:\\WFT_OBS_Manager\\lib\\Java-WebSocket-1.5.7.jar",
+        "e:\\WFT_OBS_Manager\\lib\\json-20140107.jar",
+        "e:\\WFT_OBS_Manager\\lib\\slf4j-api-2.0.16.jar",
+        "e:\\WFT_OBS_Manager\\lib\\slf4j-simple-2.0.16.jar"
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
+}
