@@ -37,7 +37,9 @@ public class App extends WebSocketClient{
                 try{
                     String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
                     App client = new App(new URI(serverUri));
+                    client.connect();
                     System.out.println("yeaaah");
+                    client.sendCheckAtConnection();
                     
                 }
                 catch(Exception er){
@@ -153,4 +155,7 @@ public class App extends WebSocketClient{
     }
     ///////////////////////////////////////////////////////////////////////////Join or Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+    public void sendCheckAtConnection(){
+        send("Hello there");
+    }
 }
