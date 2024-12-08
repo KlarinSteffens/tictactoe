@@ -61,7 +61,6 @@ public class App{
                             @Override
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
-                                me.startGame(frame, selectGamePanel, tictactoePanel);
                             }
                             @Override
                             public void onError(Exception e){
@@ -78,6 +77,7 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
+                                    me.startGame(frame, selectGamePanel, tictactoePanel);
                                 }
                             }
                             @Override
