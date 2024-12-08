@@ -98,6 +98,12 @@ public class App{
                         @Override
                         public void onMessage(WebSocket Client, String Message){
                             System.out.println(Message);
+
+                            JSONObject json = new JSONObject(Message);
+
+                            if(json.getString("requestType").equals("Move")){
+                                me.syncMove(json);
+                            }
                         }
                         @Override
                         public void onClose(WebSocket Client, int code, String reason, boolean remote){
@@ -110,7 +116,9 @@ public class App{
                     };
                     server.start();
                 }).start();
+                player = false;
             }
+
         });
 
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -137,7 +145,7 @@ public class App{
         tictactoePanel.add(p2);
         for (int i = 0;i < 3; i++ ) {
             for (int j = 0; j < 3; j++){
-                jbutton[i][j] = new JButton(String.valueOf(i) + "," + String.valueOf(j));
+                jbutton[i][j] = new JButton();
                 p2.add(jbutton[i][j]);
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
@@ -147,6 +155,7 @@ public class App{
                                     if (jbutton[i][j] == (JButton) e.getSource()) {
                                         jbutton[i][j].setBackground(Color.BLUE);
                                         jbutton[i][j].setEnabled(false);
+                                        jbutton[i][j].setText("O");
                                         player = false;
                                         me.sendMove(i, j);
                                     }
@@ -193,6 +202,7 @@ public class App{
         int i = json.getInt("yCord");
         jbutton[i][j].setBackground(Color.RED);
         jbutton[i][j].setEnabled(false);
+        jbutton[i][j].setText("X");
         player = true;
 
     }
