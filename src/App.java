@@ -19,6 +19,8 @@ public class App{
     static JButton jbutton[][] = new JButton[3][3];
     static int boardDimenions = 3;
     static JPanel p2 = new JPanel(); 
+    public int moveCount;
+    static JLabel gewonnen = new JLabel("Gewonnen hat... ");
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -81,6 +83,9 @@ public class App{
                                     me.drawBoard(p2);
                                     me.startGame(frame, selectGamePanel, tictactoePanel);
                                 }
+                                else if(json.getString("requestType").equals("sendWin")){
+                                    gewonnen.setText("Server has Won!");
+                                }
                             }
                             @Override
                             public void onClose(int code, String reason, boolean remote){
@@ -127,6 +132,9 @@ public class App{
                             if(json.getString("requestType").equals("Move")){
                                 me.syncMove(json);
                             }
+                            else if(json.getString("requestType").equals("sendWin")){
+                                gewonnen.setText("Client has Won!");
+                            }
                         }
                         @Override
                         public void onClose(WebSocket Client, int code, String reason, boolean remote){
@@ -165,7 +173,6 @@ public class App{
 
         JPanel p3 = new JPanel(); 
         p3.setBounds(0,280,290,200); 
-        JLabel gewonnen = new JLabel("Gewonnen hat... ");
         p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
 
         tictactoePanel.add(p3);
@@ -205,8 +212,43 @@ public class App{
         player = true;
 
     }
-    public void WinCheck(){
+    public void WinCheck(int x, int y, int boardDimenions){
+        moveCount++;
+        for(int i = 0; i < boardDimenions; i++){
+            if(jbutton[x][i].getText() != "X")
+                break;
+            if(i == boardDimenions - 1){
+                
+            }
+        }
+        for(int i = 0; i <boardDimenions; i++){
+            if(jbutton[i][y].getText() != "X")
+                break;
+            if(i == boardDimenions - 1){
+                
+            }
+        }
+        if(x == y){
+            for(int i = 0; i < boardDimenions; i++){
+                if(jbutton[i][i].getText() != "X")
+                    break;
+                if(i == boardDimenions-1){
 
+                }
+            }
+        }
+        if(x + y == boardDimenions - 1){
+            for(int i = 0; i < boardDimenions; i++){
+                if(jbutton[i][(boardDimenions - 1) - i].getText() != "X")
+                    break;
+                if(i == boardDimenions -1){
+
+                }
+            }
+        }
+        if(moveCount == (Math.pow(boardDimenions, 2) - 1)){
+            sendWin();
+        }
     }
     public void syncBoardDimensions(int boardDimenions){
         JSONObject syncBoardDimensions = new JSONObject();
@@ -218,7 +260,6 @@ public class App{
 
     public void drawBoard(JPanel p2){
         jbutton = new JButton[boardDimenions][boardDimenions];
-        p2.setBounds(0,80,90 * boardDimenions, 90*boardDimenions);
         p2.setLayout(new GridLayout(0,boardDimenions,5,5));
         for (int i = 0;i < boardDimenions; i++ ) {
             for (int j = 0; j < boardDimenions; j++){
@@ -235,6 +276,7 @@ public class App{
                                         jbutton[i][j].setText("X");
                                         player = false;
                                         sendMove(i, j);
+                                        WinCheck(i, j, boardDimenions);
                                     }
                                 }
                             }
@@ -242,6 +284,17 @@ public class App{
                     }
                 });
             }
+        }
+    }
+    public void sendWin(){
+        JSONObject sendWin = new JSONObject();
+        sendWin.put("requestType", "sendWin");
+
+        if(client != null){
+            client.send(sendWin.toString());
+        }
+        else{
+            server.broadcast(sendWin.toString());  
         }
     }
 }
