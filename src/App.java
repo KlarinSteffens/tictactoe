@@ -33,20 +33,21 @@ public class App extends WebSocketClient{
         
         JButton connectButton = new JButton("Connect");
         connectButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                try{
-                    String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
-                    App client = new App(new URI(serverUri));
-                    client.connect();
-                    System.out.println("yeaaah");
-                    client.sendCheckAtConnection();
-                    
-                }
-                catch(Exception er){
-                    System.out.println("shit" + er);
-                }
+            public void actionPerformed(ActionEvent e) {
+                new Thread(() -> {
+                    try {
+                        String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
+                        App client = new App(new URI(serverUri));
+                        client.connectBlocking();
+                        System.out.println("Connected successfully!");
+                        client.sendCheckAtConnection();
+                    } catch (Exception er) {
+                        System.out.println("Connection failed: " + er);
+                    }
+                }).start();
             }
         });
+        
         
         JButton hostButton = new JButton("Host new game");
         hostButton.setBounds(50, 30, 200, 30);
