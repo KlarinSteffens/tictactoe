@@ -3,6 +3,8 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.ServerHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.JSONObject;
+
 import java.net.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,11 +14,14 @@ import javax.swing.*;
 public class App{  
        
     public static boolean player = true; 
+    static WebSocketServer server;
+    static WebSocketClient client;
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
         JPanel selectGamePanel = new JPanel();
         JPanel tictactoePanel = new JPanel();
+        App me = new App();
         
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
@@ -36,11 +41,10 @@ public class App{
                 new Thread(() -> {
                     try {
                         String serverUrl = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
-                        WebSocketClient client = new WebSocketClient(new URI(serverUrl)) {
+                        client = new WebSocketClient(new URI(serverUrl)) {
                             @Override
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
-                                App me = new App();
                                 me.startGame(frame, selectGamePanel, tictactoePanel);
                             }
                             @Override
@@ -75,11 +79,9 @@ public class App{
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
                     System.out.println("[Server] Starting...");
-                    WebSocketServer server;
                     server = new WebSocketServer(new InetSocketAddress(8080)) {
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
-                            App me = new App();
                             me.startGame(frame, selectGamePanel, tictactoePanel);
                         }
                         @Override
@@ -136,6 +138,7 @@ public class App{
                         gedrueckt.setBackground(Color.RED);
                         gedrueckt.setEnabled(false);
                         player = false;
+                        me.sendMove(e);
                     }
                 }
             });
@@ -149,13 +152,27 @@ public class App{
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 400);
+        frame.setSize(400, 400);
     }
 
     public void startGame(JFrame frame, JPanel selectGamePanel, JPanel tictactoePanel){
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
         System.out.println("done");
+        frame.setSize(305, 350);
+    }
+    public void sendMove(ActionEvent e){
+        JSONObject sendMove = new JSONObject();
+        sendMove.put("requestType", "Move");
+        sendMove.put("buttonStateChanged", (JButton) e.getSource());
+
+        if(client != null){
+            client.send(sendMove.toString());
+        }
+        else{
+            server.broadcast(sendMove.toString());  
+        }
+
     }
 }
 
