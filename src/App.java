@@ -35,12 +35,14 @@ public class App extends WebSocketClient{
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 try{
-                    App client = new App(new URI(ipAddressInput.getText() + ":" + portAddressInput.getText()));
+                    String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
+                    App client = new App(new URI(serverUri));
                     client.connectBlocking();
+                    System.out.println("yeaaah");
                     
                 }
                 catch(Exception er){
-                    System.out.println("shit");
+                    System.out.println("shit" + er);
                 }
             }
         });
