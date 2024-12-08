@@ -1,7 +1,9 @@
 import org.java_websocket.*;
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.ServerHandshake;
-
+import org.java_websocket.server.WebSocketServer;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.*;
 import java.net.*;
 import java.security.*;
@@ -17,9 +19,30 @@ public class App extends WebSocketClient{
     public App(URI serverUri) {
         super(serverUri);
     }
+
+    @Override
+    public void onOpen(ServerHandshake handshakeData){
+
+    }
+    @Override
+    public void onError(Exception e){
+
+    }
+    @Override
+    public void onMessage(String Message){
+        System.out.println(Message);
+    }
+    @Override
+    public void onClose(int code, String reason, boolean remote){
+
+    }
+
     
     public static boolean player = true; 
-;
+
+    public static WebSocket client;
+    public static WebSocketServer server;
+
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -28,10 +51,14 @@ public class App extends WebSocketClient{
         selectGamePanel.setLayout(null);
     
         JTextField ipAddressInput = new JTextField();
+        selectGamePanel.add(ipAddressInput);
+        ipAddressInput.setBounds(50, 110, 100, 25);
     
         JTextField portAddressInput = new JTextField();
+        selectGamePanel.add(portAddressInput);
+        portAddressInput.setBounds(160, 110, 90, 25);
         
-        JButton connectButton = new JButton("Connect");
+        JButton connectButton = new JButton("Join Game");
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
@@ -41,39 +68,50 @@ public class App extends WebSocketClient{
                         client.connectBlocking();
                         System.out.println("Connected successfully!");
                         client.sendCheckAtConnection();
-                    } catch (Exception er) {
-                        System.out.println("Connection failed: " + er);
+                    } catch (URISyntaxException | InterruptedException ex) {
+                        System.out.println("Connection failed: " + ex);
                     }
                 }).start();
             }
         });
+        selectGamePanel.add(connectButton);
+        connectButton.setBounds(100, 150, 100, 30);
         
         
         JButton hostButton = new JButton("Host new game");
+        selectGamePanel.add(hostButton);
         hostButton.setBounds(50, 30, 200, 30);
         hostButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                hostGame();
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("[Server] Starting...");
+                new Thread(() -> {
+                    server = new WebSocketServer(new InetSocketAddress(8080)) {
+                        @Override
+                        public void onOpen(WebSocket newClient, ClientHandshake handshake) {
+                            client = newClient;
+                        }
+                        @Override
+                        public void onError(WebSocket Client, Exception e){
+                    
+                        }
+                        @Override
+                        public void onMessage(WebSocket Client, String Message){
+                            System.out.println(Message);
+                        }
+                        @Override
+                        public void onClose(WebSocket Client, int code, String reason, boolean remote){
+
+                        }
+                        @Override
+                        public void onStart() {
+                            System.out.println("Server started on port 8080!");
+                        }
+                    };
+
+                    server.start();
+                }).start();
             }
         });
-        selectGamePanel.add(hostButton);
-    
-        JButton joinButton = new JButton("Join game");
-        joinButton.setBounds(50, 70, 200, 30);
-        joinButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e){
-                System.out.println("pressed");
-                selectGamePanel.add(ipAddressInput);
-                ipAddressInput.setBounds(50, 110, 100, 25);
-                selectGamePanel.add(portAddressInput);
-                portAddressInput.setBounds(160, 110, 90, 25);
-                selectGamePanel.add(connectButton);
-                connectButton.setBounds(100, 150, 100, 30);
-            }
-        });
-        selectGamePanel.add(joinButton);
-    
-      
         JPanel tictactoePanel = new JPanel();
         tictactoePanel.setLayout(null);
 
@@ -119,46 +157,12 @@ public class App extends WebSocketClient{
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 400);
-       }
-
-
-    @Override
-    public void onOpen(ServerHandshake handshakeData){
-
     }
-    @Override
-    public void onError(Exception e){
 
-    }
-    @Override
-    public void onMessage(String Message){
-        System.out.println(Message);
-    }
-    @Override
-    public void onClose(int code, String reason, boolean remote){
-
-    }
-    public static void hostGame(){
-        System.out.println("[Server] Starting...");
-        try{
-            ServerSocket serverSocket = new ServerSocket(8080);
-            System.out.println("[Server] Started. Waiting for connection...");
-            try {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("succses");
-
-                
-            } catch (Exception e) {
-                
-            }
-
-        }
-        catch(IOException e){
-        } 
-    }
     ///////////////////////////////////////////////////////////////////////////Join or Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
     public void sendCheckAtConnection(){
         send("Hello there");
     }
 }
+
