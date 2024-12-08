@@ -37,7 +37,6 @@ public class App extends WebSocketClient{
                 try{
                     String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
                     App client = new App(new URI(serverUri));
-                    client.connectBlocking();
                     System.out.println("yeaaah");
                     
                 }
@@ -143,8 +142,6 @@ public class App extends WebSocketClient{
             System.out.println("[Server] Started. Waiting for connection...");
             try {
                 Socket clientSocket = serverSocket.accept();
-                BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
                 
             } catch (Exception e) {
                 
