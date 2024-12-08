@@ -217,7 +217,7 @@ public class App{
     }
 
     public void drawBoard(JPanel p2){
-        System.out.println(boardDimenions);
+        jbutton = new JButton[boardDimenions][boardDimenions];
         for (int i = 0;i < boardDimenions; i++ ) {
             for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
