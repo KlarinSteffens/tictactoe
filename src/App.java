@@ -37,6 +37,7 @@ public class App extends WebSocketClient{
                 try{
                     String serverUri = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
                     App client = new App(new URI(serverUri));
+                    client.connect();
                     System.out.println("yeaaah");
                     
                 }
@@ -129,7 +130,7 @@ public class App extends WebSocketClient{
     }
     @Override
     public void onMessage(String Message){
-
+        System.out.println(Message);
     }
     @Override
     public void onClose(int code, String reason, boolean remote){
