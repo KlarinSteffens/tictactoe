@@ -145,30 +145,30 @@ public class App{
         });
 
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        tictactoePanel.setLayout(null);
+        tictactoePanel.setLayout(new BorderLayout());
 
         JPanel p1 = new JPanel(); 
         p1.setBounds(0,0,290,70); 
-        p2.setBounds(0,80,290,200);
-        JPanel p3 = new JPanel(); 
-        p3.setBounds(0,280,290,200); 
         p1.setLayout(null);
-        p2.setLayout(new GridLayout(boardDimenions,boardDimenions,5,5));
-        
+
         JLabel spieler = new JLabel("Spieler 1");
         JLabel verbunden = new JLabel("Nicht Verbunden");
         JLabel istDran = new JLabel("Aktuell am Zug... ");
-        JLabel gewonnen = new JLabel("Gewonnen hat... ");
-        
-        tictactoePanel.add(p1);
+
         p1.add(spieler); spieler.setBounds(10,10,200,20);
         p1.add(verbunden); verbunden.setBounds(10,30,200,20);
         p1.add(istDran); istDran.setBounds(10,50,200,20);
-        
+
+        tictactoePanel.add(p1);
+
         tictactoePanel.add(p2);
 
-        tictactoePanel.add(p3);
+        JPanel p3 = new JPanel(); 
+        p3.setBounds(0,280,290,200); 
+        JLabel gewonnen = new JLabel("Gewonnen hat... ");
         p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
+
+        tictactoePanel.add(p3);
 
         frame.add(selectGamePanel);
         selectGamePanel.setBounds(0,0, 1000, 1000);
@@ -181,7 +181,7 @@ public class App{
     public void startGame(JFrame frame, JPanel selectGamePanel, JPanel tictactoePanel){
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
-        frame.setSize(305, 350);
+        frame.setSize((90 * boardDimenions) + 10, (90 * boardDimenions) + 100);
     }
     public void sendMove(int i, int j){
         JSONObject sendMove = new JSONObject();
@@ -218,6 +218,8 @@ public class App{
 
     public void drawBoard(JPanel p2){
         jbutton = new JButton[boardDimenions][boardDimenions];
+        p2.setBounds(0,80,90 * boardDimenions, 90*boardDimenions);
+        p2.setLayout(new GridLayout(0,boardDimenions,5,5));
         for (int i = 0;i < boardDimenions; i++ ) {
             for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
