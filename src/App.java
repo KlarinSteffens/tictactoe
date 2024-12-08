@@ -131,7 +131,7 @@ public class App extends WebSocketClient{
     }
     @Override
     public void onMessage(String Message){
-
+        System.out.println(Message);
     }
     @Override
     public void onClose(int code, String reason, boolean remote){
@@ -144,6 +144,8 @@ public class App extends WebSocketClient{
             System.out.println("[Server] Started. Waiting for connection...");
             try {
                 Socket clientSocket = serverSocket.accept();
+                System.out.println("succses");
+
                 
             } catch (Exception e) {
                 
