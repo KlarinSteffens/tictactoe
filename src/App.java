@@ -29,18 +29,16 @@ public class App extends WebSocketClient{
     
         JTextField ipAddressInput = new JTextField();
         ipAddressInput.setBounds(50, 110, 100, 25);
-        selectGamePanel.add(ipAddressInput);
     
         JTextField portAddressInput = new JTextField();
         portAddressInput.setBounds(160, 110, 90, 25);
-        selectGamePanel.add(portAddressInput);
         
         JButton connectButton = new JButton("Connect");
         connectButton.setBounds(100, 150, 100, 30);
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 try{
-                    App client = new App(new URI(ipAddressInput.getText()));
+                    App client = new App(new URI(ipAddressInput.getText() + ":" + portAddressInput.getText()));
                     client.connectBlocking();
                 }
                 catch(Exception er){
