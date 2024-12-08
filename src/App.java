@@ -108,6 +108,7 @@ public class App{
                     server = new WebSocketServer(new InetSocketAddress(8080)) {
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
+                            me.syncBoardDimensions(boardDimenions);
                             me.startGame(frame, selectGamePanel, tictactoePanel);
                         }
                         @Override
@@ -136,7 +137,6 @@ public class App{
                     server.start();
                 }).start();
                 player = false;
-                me.syncBoardDimensions(boardDimenions);
             }
 
         });
