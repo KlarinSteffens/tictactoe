@@ -33,33 +33,35 @@ public class App{
         JButton connectButton = new JButton("Join Game");
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                try {
-                    String serverUrl = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
-                    WebSocketClient client = new WebSocketClient(new URI(serverUrl)) {
-                        @Override
-                        public void onOpen(ServerHandshake handshakeData){
-                            System.out.println("[Client] Connection Successfull");
-                        }
-                        @Override
-                        public void onError(Exception e){
-                            System.out.println("[Client] Error:" + e);
-                        }
-                        @Override
-                        public void onMessage(String Message){
-                            System.out.println(Message);
-                        }
-                        @Override
-                        public void onClose(int code, String reason, boolean remote){
-                            System.out.println("[Client] Server disconnected" + reason);
-                        }
-                    };
-                    client.connectBlocking();
-                    System.out.println("Connected successfully!");
-                } catch (URISyntaxException | InterruptedException ex) {
-                    System.out.println("Connection failed: " + ex);
-                }
-                App me = new App();
-                me.startGame(frame, selectGamePanel, tictactoePanel);
+                new Thread(() -> {
+                    try {
+                        String serverUrl = "ws://" + ipAddressInput.getText() + ":" + portAddressInput.getText();
+                        WebSocketClient client = new WebSocketClient(new URI(serverUrl)) {
+                            @Override
+                            public void onOpen(ServerHandshake handshakeData){
+                                System.out.println("[Client] Connection Successfull");
+                            }
+                            @Override
+                            public void onError(Exception e){
+                                System.out.println("[Client] Error:" + e);
+                            }
+                            @Override
+                            public void onMessage(String Message){
+                                System.out.println(Message);
+                            }
+                            @Override
+                            public void onClose(int code, String reason, boolean remote){
+                                System.out.println("[Client] Server disconnected" + reason);
+                            }
+                        };
+                        client.connectBlocking();
+                        System.out.println("Connected successfully!");
+                    } catch (URISyntaxException | InterruptedException ex) {
+                        System.out.println("Connection failed: " + ex);
+                    }
+                    App me = new App();
+                    me.startGame(frame, selectGamePanel, tictactoePanel);
+                });
             }
         });
         selectGamePanel.add(connectButton);
@@ -71,33 +73,35 @@ public class App{
         hostButton.setBounds(50, 30, 200, 30);
         hostButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("[Server] Starting...");
-                WebSocketServer server;
-                server = new WebSocketServer(new InetSocketAddress(8080)) {
-                    @Override
-                    public void onOpen(WebSocket newClient, ClientHandshake handshake) {
-                        
-                    }
-                    @Override
-                    public void onError(WebSocket Client, Exception e){
-                        System.out.println("[Server] Error:" + e);
-                    }
-                    @Override
-                    public void onMessage(WebSocket Client, String Message){
-                        System.out.println(Message);
-                    }
-                    @Override
-                    public void onClose(WebSocket Client, int code, String reason, boolean remote){
-                        System.out.println("[Server] Client disconnected " + reason);
-                    }
-                    @Override
-                    public void onStart() {
-                        System.out.println("Server started on port 8080!");
-                    }
-                };
-                server.start();
-                App me = new App();
-                me.startGame(frame, selectGamePanel, tictactoePanel);
+                new Thread(() -> {
+                    System.out.println("[Server] Starting...");
+                    WebSocketServer server;
+                    server = new WebSocketServer(new InetSocketAddress(8080)) {
+                        @Override
+                        public void onOpen(WebSocket newClient, ClientHandshake handshake) {
+                            
+                        }
+                        @Override
+                        public void onError(WebSocket Client, Exception e){
+                            System.out.println("[Server] Error:" + e);
+                        }
+                        @Override
+                        public void onMessage(WebSocket Client, String Message){
+                            System.out.println(Message);
+                        }
+                        @Override
+                        public void onClose(WebSocket Client, int code, String reason, boolean remote){
+                            System.out.println("[Server] Client disconnected " + reason);
+                        }
+                        @Override
+                        public void onStart() {
+                            System.out.println("Server started on port 8080!");
+                        }
+                    };
+                    server.start();
+                    App me = new App();
+                    me.startGame(frame, selectGamePanel, tictactoePanel);
+                });
             }
         });
 
