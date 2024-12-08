@@ -17,6 +17,7 @@ public class App{
     static WebSocketServer server;
     static WebSocketClient client;
     static JButton jbutton[][] = new JButton[3][3];
+    static int boardDimenions = 3;
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -27,14 +28,26 @@ public class App{
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
         selectGamePanel.setLayout(null);
-    
+        JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
+        selectGamePanel.add(boardDimensionLabel);
+        boardDimensionLabel.setBounds(0,0, 400, 30);
+        JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
+        selectGamePanel.add(boardScrollBar);
+        boardScrollBar.addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                boardDimenions = e.getValue();
+                boardDimensionLabel.setText("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
+            }
+        });
+        boardScrollBar.setBounds(100, 100, 300, 30);
         JTextField ipAddressInput = new JTextField();
         selectGamePanel.add(ipAddressInput);
-        ipAddressInput.setBounds(50, 110, 100, 25);
+        ipAddressInput.setBounds(50, 70, 90, 25);
     
         JTextField portAddressInput = new JTextField();
         selectGamePanel.add(portAddressInput);
-        portAddressInput.setBounds(160, 110, 90, 25);
+        portAddressInput.setBounds(160, 70, 90, 25);
         
         JButton connectButton = new JButton("Join Game");
         connectButton.addActionListener(new ActionListener() {
@@ -76,7 +89,7 @@ public class App{
             }
         });
         selectGamePanel.add(connectButton);
-        connectButton.setBounds(100, 150, 100, 30);
+        connectButton.setBounds(50, 105, 200, 30);
         
         
         JButton hostButton = new JButton("Host new game");
@@ -129,7 +142,7 @@ public class App{
         JPanel p2 = new JPanel(); p2.setBounds(0,80,290,200);
         JPanel p3 = new JPanel(); p3.setBounds(0,280,290,200); 
         p1.setLayout(null);
-        p2.setLayout(new GridLayout(0,3,5,5));
+        p2.setLayout(new GridLayout(boardDimenions,boardDimenions,5,5));
         
         JLabel spieler = new JLabel("Spieler 1");
         JLabel verbunden = new JLabel("Nicht Verbunden");
@@ -137,25 +150,24 @@ public class App{
         JLabel gewonnen = new JLabel("Gewonnen hat... ");
         
         tictactoePanel.add(p1);
-        
         p1.add(spieler); spieler.setBounds(10,10,200,20);
         p1.add(verbunden); verbunden.setBounds(10,30,200,20);
         p1.add(istDran); istDran.setBounds(10,50,200,20);
         
         tictactoePanel.add(p2);
-        for (int i = 0;i < 3; i++ ) {
-            for (int j = 0; j < 3; j++){
+        for (int i = 0;i < boardDimenions; i++ ) {
+            for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
                 p2.add(jbutton[i][j]);
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
                         if (player == true) {
-                            for(int i = 0; i < 3; i++){
-                                for(int j = 0; j < 3; j++){
+                            for(int i = 0; i < boardDimenions; i++){
+                                for(int j = 0; j < boardDimenions; j++){
                                     if (jbutton[i][j] == (JButton) e.getSource()) {
                                         jbutton[i][j].setBackground(Color.BLUE);
                                         jbutton[i][j].setEnabled(false);
-                                        jbutton[i][j].setText("O");
+                                        jbutton[i][j].setText("X");
                                         player = false;
                                         me.sendMove(i, j);
                                     }
@@ -202,8 +214,11 @@ public class App{
         int i = json.getInt("yCord");
         jbutton[i][j].setBackground(Color.RED);
         jbutton[i][j].setEnabled(false);
-        jbutton[i][j].setText("X");
+        jbutton[i][j].setText("O");
         player = true;
+
+    }
+    public void WinCheck(){
 
     }
 }
