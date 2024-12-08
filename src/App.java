@@ -28,25 +28,22 @@ public class App extends WebSocketClient{
         selectGamePanel.setLayout(null);
     
         JTextField ipAddressInput = new JTextField();
-        ipAddressInput.setBounds(50, 110, 100, 25);
     
         JTextField portAddressInput = new JTextField();
-        portAddressInput.setBounds(160, 110, 90, 25);
         
         JButton connectButton = new JButton("Connect");
-        connectButton.setBounds(100, 150, 100, 30);
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
                 try{
                     App client = new App(new URI(ipAddressInput.getText() + ":" + portAddressInput.getText()));
                     client.connectBlocking();
+                    
                 }
                 catch(Exception er){
                     System.out.println("shit");
                 }
             }
         });
-        selectGamePanel.add(connectButton);
         
         JButton hostButton = new JButton("Host new game");
         hostButton.setBounds(50, 30, 200, 30);
@@ -61,9 +58,13 @@ public class App extends WebSocketClient{
         joinButton.setBounds(50, 70, 200, 30);
         joinButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
+                System.out.println("pressed");
                 selectGamePanel.add(ipAddressInput);
+                ipAddressInput.setBounds(50, 110, 100, 25);
                 selectGamePanel.add(portAddressInput);
+                portAddressInput.setBounds(160, 110, 90, 25);
                 selectGamePanel.add(connectButton);
+                connectButton.setBounds(100, 150, 100, 30);
             }
         });
         selectGamePanel.add(joinButton);
@@ -113,6 +114,7 @@ public class App extends WebSocketClient{
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 400);
        }
 
 
