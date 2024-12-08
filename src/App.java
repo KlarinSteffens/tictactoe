@@ -128,10 +128,11 @@ public class App{
         p1.add(istDran); istDran.setBounds(10,50,200,20);
         
         tictactoePanel.add(p2);
-        Button button[] = new Button[9];
+        JButton jbutton[] = new JButton[9];
         for (int i = 0;i < 9; i++ ) {
-            button[i] = new Button(String.valueOf(i));
-            p2.add(button[i]); button[i].addActionListener(new ActionListener() {
+            jbutton[i] = new JButton(String.valueOf(i));
+            p2.add(jbutton[i]);
+            jbutton[i].addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {      
                     if (player == true) {
                         JButton gedrueckt = (JButton) e.getSource();
