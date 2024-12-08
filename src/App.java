@@ -143,8 +143,7 @@ public class App extends WebSocketClient{
             System.out.println("[Server] Started. Waiting for connection...");
             try {
                 Socket clientSocket = serverSocket.accept();
-                BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
+                System.out.println("succses");
                 
             } catch (Exception e) {
                 
