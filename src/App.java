@@ -16,6 +16,7 @@ public class App{
     public static boolean player = true; 
     static WebSocketServer server;
     static WebSocketClient client;
+    static JButton jbutton[][] = new JButton[3][3];
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -54,6 +55,12 @@ public class App{
                             @Override
                             public void onMessage(String Message){
                                 System.out.println(Message);
+
+                                JSONObject json = new JSONObject(Message);
+
+                                if(json.getString("requestType").equals("Move")){
+                                    me.syncMove(json);
+                                }
                             }
                             @Override
                             public void onClose(int code, String reason, boolean remote){
@@ -128,21 +135,27 @@ public class App{
         p1.add(istDran); istDran.setBounds(10,50,200,20);
         
         tictactoePanel.add(p2);
-        JButton jbutton[] = new JButton[9];
-        for (int i = 0;i < 9; i++ ) {
-            jbutton[i] = new JButton(String.valueOf(i));
-            p2.add(jbutton[i]);
-            jbutton[i].addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {      
-                    if (player == true) {
-                        JButton gedrueckt = (JButton) e.getSource();
-                        gedrueckt.setBackground(Color.RED);
-                        gedrueckt.setEnabled(false);
-                        player = false;
-                        me.sendMove(e);
+        for (int i = 0;i < 3; i++ ) {
+            for (int j = 0; j < 3; j++){
+                jbutton[i][j] = new JButton(String.valueOf(i) + "," + String.valueOf(j));
+                p2.add(jbutton[i][j]);
+                jbutton[i][j].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {      
+                        if (player == true) {
+                            for(int i = 0; i < 3; i++){
+                                for(int j = 0; j < 3; j++){
+                                    if (jbutton[i][j] == (JButton) e.getSource()) {
+                                        jbutton[i][j].setBackground(Color.BLUE);
+                                        jbutton[i][j].setEnabled(false);
+                                        player = false;
+                                        me.sendMove(i, j);
+                                    }
+                                }
+                            }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         
         tictactoePanel.add(p3);
@@ -162,10 +175,11 @@ public class App{
         System.out.println("done");
         frame.setSize(305, 350);
     }
-    public void sendMove(ActionEvent e){
+    public void sendMove(int i, int j){
         JSONObject sendMove = new JSONObject();
         sendMove.put("requestType", "Move");
-        sendMove.put("buttonStateChanged", (JButton) e.getSource());
+        sendMove.put("xCord", j);
+        sendMove.put("yCord", i);
 
         if(client != null){
             client.send(sendMove.toString());
@@ -173,6 +187,13 @@ public class App{
         else{
             server.broadcast(sendMove.toString());  
         }
+    }
+    public void syncMove(JSONObject json){
+        int j = json.getInt("xCord");
+        int i = json.getInt("yCord");
+        jbutton[i][j].setBackground(Color.RED);
+        jbutton[i][j].setEnabled(false);
+        player = true;
 
     }
 }
