@@ -1,4 +1,7 @@
 import org.java_websocket.*;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
 import java.util.*;
 import java.net.*;
 import java.security.*;
@@ -8,77 +11,136 @@ import java.io.*;
 import javax.swing.*;
 
 
-public class App extends JFrame implements ActionListener, ItemListener{
+public class App extends WebSocketClient{
+    
+    
+    public App(URI serverUri) {
+        super(serverUri);
+    }
+    
+    public static boolean player = true; 
+;
     public static void main(String[] args) {
-
-///////////////////////////////////////////////////////////////////////////Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        boolean player1 = true;
-
-        JFrame game = new JFrame("TicTacToe");
-        game.setSize(305,350);
-        game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        game.setLayout(null);
         
-        JPanel status = new JPanel(); status.setBounds(0,0,290,70); 
-        JPanel grid = new JPanel(); grid.setBounds(0,80,290,200);
-        JPanel winner = new JPanel(); winner.setBounds(0,280,290,200); 
-        status.setLayout(null);
-        grid.setLayout(new GridLayout());
+        JFrame frame = new JFrame("Select Connection");
         
-        JLabel player = new JLabel("Spieler 1");
-        JLabel connected = new JLabel("Nicht Verbunden");
-        JLabel currentTurn = new JLabel("Aktuell am Zug... ");
-        JLabel won = new JLabel("Gewonnen hat... ");
+        JPanel selectGamePanel = new JPanel();
+        selectGamePanel.setLayout(null);
+    
+        JTextField ipAddressInput = new JTextField();
+        ipAddressInput.setBounds(50, 110, 100, 25);
+        selectGamePanel.add(ipAddressInput);
+    
+        JTextField portAddressInput = new JTextField();
+        portAddressInput.setBounds(160, 110, 90, 25);
+        selectGamePanel.add(portAddressInput);
         
-        game.add(status);
-        
-        status.add(player); 
-        player.setBounds(10,10,200,20);
-        status.add(connected); 
-        connect.setBounds(10,30,200,20);
-        status.add(currentTurn); 
-        currentTurn.setBounds(10,50,200,20);
-        
-        game.add(grid);
-        JButton button[][] = new JButton[3][3];
-        for (int i = 0;i < 3; i++ ) {
-            for(int j = 0; j < 3; j++){
-                button[i][j] = new JButton(String.valueOf(i + j));
-                grid.add(button[i][j]); 
-                button[i][j].addActionListener(this);
+        JButton connectButton = new JButton("Connect");
+        connectButton.setBounds(100, 150, 100, 30);
+        connectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                try{
+                    App client = new App(new URI(ipAddressInput.getText()));
+                    client.connectBlocking();
+                }
+                catch(Exception er){
+                    System.out.println("shit");
+                }
             }
+        });
+        selectGamePanel.add(connectButton);
+        
+        JButton hostButton = new JButton("Host new game");
+        hostButton.setBounds(50, 30, 200, 30);
+        hostButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                hostGame();
+            }
+        });
+        selectGamePanel.add(hostButton);
+    
+        JButton joinButton = new JButton("Join game");
+        joinButton.setBounds(50, 70, 200, 30);
+        joinButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                selectGamePanel.add(ipAddressInput);
+                selectGamePanel.add(portAddressInput);
+                selectGamePanel.add(connectButton);
+            }
+        });
+        selectGamePanel.add(joinButton);
+    
+      
+        JPanel tictactoePanel = new JPanel();
+        tictactoePanel.setLayout(null);
+
+        JPanel p1 = new JPanel(); p1.setBounds(0,0,290,70); 
+        JPanel p2 = new JPanel(); p2.setBounds(0,80,290,200);
+        JPanel p3 = new JPanel(); p3.setBounds(0,280,290,200); 
+        p1.setLayout(null);
+        p2.setLayout(new GridLayout(0,3,5,5));
+        
+        JLabel spieler = new JLabel("Spieler 1");
+        JLabel verbunden = new JLabel("Nicht Verbunden");
+        JLabel istDran = new JLabel("Aktuell am Zug... ");
+        JLabel gewonnen = new JLabel("Gewonnen hat... ");
+        
+        tictactoePanel.add(p1);
+        
+        p1.add(spieler); spieler.setBounds(10,10,200,20);
+        p1.add(verbunden); verbunden.setBounds(10,30,200,20);
+        p1.add(istDran); istDran.setBounds(10,50,200,20);
+        
+        tictactoePanel.add(p2);
+        Button button[] = new Button[9];
+        for (int i = 0;i < 9; i++ ) {
+            button[i] = new Button(String.valueOf(i));
+            p2.add(button[i]); button[i].addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {      
+                    if (player == true) {
+                        JButton gedrueckt = (JButton) e.getSource();
+                        gedrueckt.setBackground(Color.RED);
+                        gedrueckt.setEnabled(false);
+                        player = false;
+                    }
+                }
+            });
         }
         
-        game.add(winner);
-        winner.add(won); won.setBounds(10,10,200,20);
-        game.setVisible(false);
-    }
+        tictactoePanel.add(p3);
+        p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
+
+        frame.add(selectGamePanel);
+        selectGamePanel.setBounds(0,0, 1000, 1000);
+
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       }
 
 
-    public static void joinGame(String ip, int port, JFrame frame, JFrame game){
-        System.out.println("[Client] Searching for Server...");
-        try{
-            Socket serverSocket = new Socket(ip, port);
-            System.out.println("[Client] Successfuly connected to server");
-            frame.setVisible(false);
-            game.setVisible(true);
-            BufferedReader br = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
-            PrintWriter pw = new PrintWriter(serverSocket.getOutputStream(), true);
-        }
-        catch(IOException e){
-    
-        }
+    @Override
+    public void onOpen(ServerHandshake handshakeData){
+
     }
-    
-    public static void hostGame(JFrame frame, JFrame game){
+    @Override
+    public void onError(Exception e){
+
+    }
+    @Override
+    public void onMessage(String Message){
+
+    }
+    @Override
+    public void onClose(int code, String reason, boolean remote){
+
+    }
+    public static void hostGame(){
         System.out.println("[Server] Starting...");
         try{
             ServerSocket serverSocket = new ServerSocket(8080);
             System.out.println("[Server] Started. Waiting for connection...");
             try {
                 Socket clientSocket = serverSocket.accept();
-                frame.setVisible(false);
-                game.setVisible(true);
                 BufferedReader br = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 PrintWriter pw = new PrintWriter(clientSocket.getOutputStream(), true);
                 
@@ -88,66 +150,8 @@ public class App extends JFrame implements ActionListener, ItemListener{
 
         }
         catch(IOException e){
-    
-        }
-        
+        } 
     }
-
-    public void actionPerformed(ActionEvent e){
-
-    }
-    public void itemStateChanged(ItemEvent i){
-
-    }
-    /*public void actionPerformed(ActionEvent e){
-        if (selectConnectionType.getSelectedItem().equals("Join a Game")) {
-            joinGame(ipAddressInput.getText(), Integer.valueOf(portAddressInput.getText()), frame, game);
-        }
-        else if (selectConnectionType.getSelectedItem().equals("Host a Game")) {
-            hostGame(frame, game);
-        }
-    }
-    public void itemStateChanged(ItemEvent e){
-        if (selectConnectionType.getSelectedItem().equals("Join a Game")) {
-            selectConnectionTypePanel.add(ipAddressInput);
-            selectConnectionTypePanel.add(portAddressInput);
-            selectConnectionTypePanel.remove(connectionInfo);
-            selectConnectionTypePanel.add(connect);
-            connect.setText("connect to host");
-        }
-        else if (selectConnectionType.getSelectedItem().equals("Host a Game")) {
-            selectConnectionTypePanel.add(connect);
-            selectConnectionTypePanel.remove(ipAddressInput);
-            selectConnectionTypePanel.remove(portAddressInput);
-            selectConnectionTypePanel.add(connectionInfo);
-            connect.setText("create new Host");
-            try {
-                connectionInfo.setText("Connection will be available through " + InetAddress.getLocalHost().getHostAddress() + " and port:" + 8080); 
-            } catch (Exception E) {
-                
-            }
-        }
-    }*/
     ///////////////////////////////////////////////////////////////////////////Join or Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-    public SelectGameFrame(){
-        JFrame frame = new JFrame("Choose Connection");
-        setSize(300, 200);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            
-        JButton host = new JButton("Host new game");
-        add(host);
-        host.addActionListener(this);
-        JButton join = new JButton("Join game");
-        add(join);
-        join.addActionListener(this);
-        JTextField ipAddressInput = new JTextField();
-        JTextField portAddressInput = new JTextField();
-        JButton connect = new JButton("create new Host");
-        connect.addActionListener(this);
-        JLabel connectionInfo = new JLabel("Test TEst TEst");
-
-        setVisible(true);  
-    }
-
 
 }
