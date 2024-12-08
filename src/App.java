@@ -18,6 +18,7 @@ public class App{
     static WebSocketClient client;
     static JButton jbutton[][] = new JButton[3][3];
     static int boardDimenions = 3;
+    static JPanel p2 = new JPanel(); 
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -77,6 +78,7 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
+                                    me.drawBoard(p2);
                                     me.startGame(frame, selectGamePanel, tictactoePanel);
                                 }
                             }
@@ -109,6 +111,7 @@ public class App{
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
+                            me.drawBoard(p2);
                             me.startGame(frame, selectGamePanel, tictactoePanel);
                         }
                         @Override
@@ -144,9 +147,11 @@ public class App{
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         tictactoePanel.setLayout(null);
 
-        JPanel p1 = new JPanel(); p1.setBounds(0,0,290,70); 
-        JPanel p2 = new JPanel(); p2.setBounds(0,80,290,200);
-        JPanel p3 = new JPanel(); p3.setBounds(0,280,290,200); 
+        JPanel p1 = new JPanel(); 
+        p1.setBounds(0,0,290,70); 
+        p2.setBounds(0,80,290,200);
+        JPanel p3 = new JPanel(); 
+        p3.setBounds(0,280,290,200); 
         p1.setLayout(null);
         p2.setLayout(new GridLayout(boardDimenions,boardDimenions,5,5));
         
@@ -161,7 +166,6 @@ public class App{
         p1.add(istDran); istDran.setBounds(10,50,200,20);
         
         tictactoePanel.add(p2);
-        me.drawBoard(p2);
 
         tictactoePanel.add(p3);
         p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
@@ -177,7 +181,6 @@ public class App{
     public void startGame(JFrame frame, JPanel selectGamePanel, JPanel tictactoePanel){
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
-        System.out.println("done");
         frame.setSize(305, 350);
     }
     public void sendMove(int i, int j){
@@ -214,6 +217,7 @@ public class App{
     }
 
     public void drawBoard(JPanel p2){
+        System.out.println(boardDimenions);
         for (int i = 0;i < boardDimenions; i++ ) {
             for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
