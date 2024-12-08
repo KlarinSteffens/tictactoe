@@ -40,6 +40,8 @@ public class App{
                             @Override
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
+                                App me = new App();
+                                me.startGame(frame, selectGamePanel, tictactoePanel);
                             }
                             @Override
                             public void onError(Exception e){
@@ -59,9 +61,7 @@ public class App{
                     } catch (URISyntaxException | InterruptedException ex) {
                         System.out.println("Connection failed: " + ex);
                     }
-                    App me = new App();
-                    me.startGame(frame, selectGamePanel, tictactoePanel);
-                });
+                }).start();
             }
         });
         selectGamePanel.add(connectButton);
@@ -79,7 +79,8 @@ public class App{
                     server = new WebSocketServer(new InetSocketAddress(8080)) {
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
-                            
+                            App me = new App();
+                            me.startGame(frame, selectGamePanel, tictactoePanel);
                         }
                         @Override
                         public void onError(WebSocket Client, Exception e){
@@ -99,9 +100,7 @@ public class App{
                         }
                     };
                     server.start();
-                    App me = new App();
-                    me.startGame(frame, selectGamePanel, tictactoePanel);
-                });
+                }).start();
             }
         });
 
@@ -156,6 +155,7 @@ public class App{
     public void startGame(JFrame frame, JPanel selectGamePanel, JPanel tictactoePanel){
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
+        System.out.println("done");
     }
 }
 
