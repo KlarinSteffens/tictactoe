@@ -48,7 +48,9 @@ public class App{
         JTextField portAddressInput = new JTextField();
         selectGamePanel.add(portAddressInput);
         portAddressInput.setBounds(160, 70, 90, 25);
-        
+
+///////////////////////////////////////////////////////////////////////////////////////Join Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        
+
         JButton connectButton = new JButton("Join Game");
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -74,6 +76,9 @@ public class App{
                                 if(json.getString("requestType").equals("Move")){
                                     me.syncMove(json);
                                 }
+                                else if(json.getString("requestType").equals("syncBoard")){
+                                    boardDimenions = json.getInt("size");
+                                }
                             }
                             @Override
                             public void onClose(int code, String reason, boolean remote){
@@ -91,6 +96,7 @@ public class App{
         selectGamePanel.add(connectButton);
         connectButton.setBounds(50, 105, 200, 30);
         
+ ///////////////////////////////////////////////////////////////////////////////////////Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         
         JButton hostButton = new JButton("Host new game");
         selectGamePanel.add(hostButton);
@@ -130,12 +136,12 @@ public class App{
                     server.start();
                 }).start();
                 player = false;
+                me.syncBoardDimensions(boardDimenions);
             }
 
         });
 
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-/// 
         tictactoePanel.setLayout(null);
 
         JPanel p1 = new JPanel(); p1.setBounds(0,0,290,70); 
@@ -220,6 +226,13 @@ public class App{
     }
     public void WinCheck(){
 
+    }
+    public void syncBoardDimensions(int boardDimenions){
+        JSONObject syncBoardDimensions = new JSONObject();
+        syncBoardDimensions.put("requestType", "syncBoard");
+        syncBoardDimensions.put("size", boardDimenions);
+
+        server.broadcast(syncBoardDimensions.toString());
     }
 }
 
