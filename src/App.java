@@ -161,30 +161,8 @@ public class App{
         p1.add(istDran); istDran.setBounds(10,50,200,20);
         
         tictactoePanel.add(p2);
-        for (int i = 0;i < boardDimenions; i++ ) {
-            for (int j = 0; j < boardDimenions; j++){
-                jbutton[i][j] = new JButton();
-                p2.add(jbutton[i][j]);
-                jbutton[i][j].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {      
-                        if (player == true) {
-                            for(int i = 0; i < boardDimenions; i++){
-                                for(int j = 0; j < boardDimenions; j++){
-                                    if (jbutton[i][j] == (JButton) e.getSource()) {
-                                        jbutton[i][j].setBackground(Color.BLUE);
-                                        jbutton[i][j].setEnabled(false);
-                                        jbutton[i][j].setText("X");
-                                        player = false;
-                                        me.sendMove(i, j);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        
+        me.drawBoard(p2);
+
         tictactoePanel.add(p3);
         p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
 
@@ -233,6 +211,32 @@ public class App{
         syncBoardDimensions.put("size", boardDimenions);
 
         server.broadcast(syncBoardDimensions.toString());
+    }
+
+    public void drawBoard(JPanel p2){
+        for (int i = 0;i < boardDimenions; i++ ) {
+            for (int j = 0; j < boardDimenions; j++){
+                jbutton[i][j] = new JButton();
+                p2.add(jbutton[i][j]);
+                jbutton[i][j].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {      
+                        if (player == true) {
+                            for(int i = 0; i < boardDimenions; i++){
+                                for(int j = 0; j < boardDimenions; j++){
+                                    if (jbutton[i][j] == (JButton) e.getSource()) {
+                                        jbutton[i][j].setBackground(Color.BLUE);
+                                        jbutton[i][j].setEnabled(false);
+                                        jbutton[i][j].setText("X");
+                                        player = false;
+                                        sendMove(i, j);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
     }
 }
 
