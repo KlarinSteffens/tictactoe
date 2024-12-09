@@ -186,25 +186,6 @@ public class App{
 
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         tictactoePanel.setLayout(new BorderLayout());
-
-        JPanel p1 = new JPanel(); 
-        p1.setLayout(null);
-        p1.setSize(new Dimension(((80*boardDimenions) + (5* boardDimenions - 1)), 100));
-
-        JLabel spieler = new JLabel("Spieler 1");
-        JLabel verbunden = new JLabel("Nicht Verbunden");
-        JLabel istDran = new JLabel("Aktuell am Zug... ");
-
-        p1.add(spieler); 
-        spieler.setBounds(10,10,200,20);
-        p1.add(verbunden); 
-        verbunden.setBounds(10,30,200,20);
-        p1.add(istDran); 
-        istDran.setBounds(10,50,200,20);
-
-        tictactoePanel.add(p1, BorderLayout.NORTH);
-
-
         JPanel p3 = new JPanel(); 
         p3.add(gewonnen); 
         gewonnen.setBounds(10,10,200,20);
@@ -244,7 +225,7 @@ public class App{
                 });
             }
         }
-        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1)), (((80*boardDimenions) + (5* boardDimenions - 1)) + 400));
+        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1)), (((80*boardDimenions) + (5* boardDimenions - 1)) + 40));
     }
     public void sendMove(int x, int y){
         moveCount++;
