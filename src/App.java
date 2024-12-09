@@ -19,8 +19,10 @@ public class App{
     static JButton jbutton[][] = new JButton[3][3];
     static int boardDimenions = 3;
     static JPanel p2 = new JPanel(); 
-    public int moveCount;
+    public static int moveCount;
     static JLabel gewonnen = new JLabel("Gewonnen hat... ");
+    static JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
+    static JLabel connectionInfo = new JLabel();
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
@@ -33,8 +35,7 @@ public class App{
         selectGamePanel.setLayout(null);
         JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
         selectGamePanel.add(boardDimensionLabel);
-        boardDimensionLabel.setBounds(0,0, 400, 30);
-        JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
+        boardDimensionLabel.setBounds(50,100, 400, 30);
         selectGamePanel.add(boardScrollBar);
         boardScrollBar.addAdjustmentListener(new AdjustmentListener() {
             @Override
@@ -43,14 +44,14 @@ public class App{
                 boardDimensionLabel.setText("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
             }
         });
-        boardScrollBar.setBounds(100, 100, 300, 30);
+        boardScrollBar.setBounds(50, 70, 200, 20);
         JTextField ipAddressInput = new JTextField();
         selectGamePanel.add(ipAddressInput);
-        ipAddressInput.setBounds(50, 70, 90, 25);
+        ipAddressInput.setBounds(50, 140, 100, 25);
     
         JTextField portAddressInput = new JTextField();
         selectGamePanel.add(portAddressInput);
-        portAddressInput.setBounds(160, 70, 90, 25);
+        portAddressInput.setBounds(150, 140, 100, 25);
 
 ///////////////////////////////////////////////////////////////////////////////////////Join Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        
 
@@ -77,6 +78,7 @@ public class App{
 
                                 if(json.getString("requestType").equals("Move")){
                                     me.syncMove(json);
+                                    moveCount++;
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
@@ -101,7 +103,7 @@ public class App{
             }
         });
         selectGamePanel.add(connectButton);
-        connectButton.setBounds(50, 105, 200, 30);
+        connectButton.setBounds(50, 165, 200, 30);
         
  ///////////////////////////////////////////////////////////////////////////////////////Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         
@@ -131,6 +133,7 @@ public class App{
 
                             if(json.getString("requestType").equals("Move")){
                                 me.syncMove(json);
+                                moveCount++;
                             }
                             else if(json.getString("requestType").equals("sendWin")){
                                 gewonnen.setText("Client has Won!");
@@ -148,6 +151,14 @@ public class App{
                     server.start();
                 }).start();
                 player = false;
+                selectGamePanel.remove(boardScrollBar);
+                selectGamePanel.add(connectionInfo);
+                connectionInfo.setBounds(50, 70, 500, 20);
+                try {
+                    connectionInfo.setText(InetAddress.getLocalHost() + ":8080");
+                } catch (Exception ex) {
+                    
+                }
             }
 
         });
@@ -218,14 +229,14 @@ public class App{
             if(jbutton[x][i].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                
+                sendWin();
             }
         }
         for(int i = 0; i <boardDimenions; i++){
             if(jbutton[i][y].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                
+                sendWin();
             }
         }
         if(x == y){
@@ -233,7 +244,7 @@ public class App{
                 if(jbutton[i][i].getText() != "X")
                     break;
                 if(i == boardDimenions-1){
-
+                    sendWin();
                 }
             }
         }
@@ -242,7 +253,7 @@ public class App{
                 if(jbutton[i][(boardDimenions - 1) - i].getText() != "X")
                     break;
                 if(i == boardDimenions -1){
-
+                    sendWin();
                 }
             }
         }
