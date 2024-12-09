@@ -82,7 +82,8 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
-                                    me.drawBoard(p2);
+                                    me.drawBoard(p2, frame);
+                                    tictactoePanel.add(p2, BorderLayout.CENTER);
                                     me.startGame(frame, selectGamePanel, tictactoePanel);
                                 }
                                 else if(json.getString("requestType").equals("sendWin")){
@@ -118,7 +119,8 @@ public class App{
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
-                            me.drawBoard(p2);
+                            me.drawBoard(p2, frame);
+                            tictactoePanel.add(p2, BorderLayout.CENTER);
                             me.startGame(frame, selectGamePanel, tictactoePanel);
                         }
                         @Override
@@ -178,15 +180,14 @@ public class App{
         p1.add(verbunden); verbunden.setBounds(10,30,200,20);
         p1.add(istDran); istDran.setBounds(10,50,200,20);
 
-        tictactoePanel.add(p1);
+        tictactoePanel.add(p1, BorderLayout.NORTH);
 
-        tictactoePanel.add(p2);
 
         JPanel p3 = new JPanel(); 
         p3.setBounds(0,280,290,200); 
         p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
 
-        tictactoePanel.add(p3);
+        tictactoePanel.add(p3, BorderLayout.SOUTH);
 
         frame.add(selectGamePanel);
         selectGamePanel.setBounds(0,0, 1000, 1000);
@@ -269,7 +270,7 @@ public class App{
         server.broadcast(syncBoardDimensions.toString());
     }
 
-    public void drawBoard(JPanel p2){
+    public void drawBoard(JPanel p2, JFrame frame){
         jbutton = new JButton[boardDimenions][boardDimenions];
         p2.setLayout(new GridLayout(0,boardDimenions,5,5));
         for (int i = 0;i < boardDimenions; i++ ) {
@@ -296,6 +297,7 @@ public class App{
                 });
             }
         }
+        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1) + 200),   ((80*boardDimenions) + (5* boardDimenions - 1)));
     }
     public void sendWin(){
         JSONObject sendWin = new JSONObject();
