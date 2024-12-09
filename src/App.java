@@ -14,20 +14,24 @@ import javax.swing.*;
 public class App{  
        
     public static boolean player = true; 
+    public static int moveCount;
+    static int boardDimenions = 3;
+
     static WebSocketServer server;
     static WebSocketClient client;
-    static JButton jbutton[][] = new JButton[3][3];
-    static int boardDimenions = 3;
+        
+    static JPanel selectGamePanel = new JPanel();
+    static JPanel tictactoePanel = new JPanel();
     static JPanel p2 = new JPanel(); 
-    public static int moveCount;
+
+    static JButton jbutton[][] = new JButton[3][3];
+    static JLabel connectionInfo = new JLabel();
     static JLabel gewonnen = new JLabel("Gewonnen hat... ");
     static JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
-    static JLabel connectionInfo = new JLabel();
+
     public static void main(String[] args) {
         
         JFrame frame = new JFrame("Select Connection");
-        JPanel selectGamePanel = new JPanel();
-        JPanel tictactoePanel = new JPanel();
         App me = new App();
         
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -36,15 +40,16 @@ public class App{
         JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
         selectGamePanel.add(boardDimensionLabel);
         boardDimensionLabel.setBounds(50,100, 400, 30);
+
         selectGamePanel.add(boardScrollBar);
         boardScrollBar.addAdjustmentListener(new AdjustmentListener() {
-            @Override
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 boardDimenions = e.getValue();
                 boardDimensionLabel.setText("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
             }
         });
         boardScrollBar.setBounds(50, 70, 200, 20);
+
         JTextField ipAddressInput = new JTextField();
         selectGamePanel.add(ipAddressInput);
         ipAddressInput.setBounds(50, 140, 100, 25);
@@ -53,9 +58,14 @@ public class App{
         selectGamePanel.add(portAddressInput);
         portAddressInput.setBounds(150, 140, 100, 25);
 
+        frame.add(selectGamePanel);
+        selectGamePanel.setBounds(0,0, 1000, 1000);
+
 ///////////////////////////////////////////////////////////////////////////////////////Join Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        
 
         JButton connectButton = new JButton("Join Game");
+        selectGamePanel.add(connectButton);
+        connectButton.setBounds(50, 165, 200, 30);
         connectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new Thread(() -> {
@@ -82,9 +92,8 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
-                                    me.drawBoard(p2, frame);
                                     tictactoePanel.add(p2, BorderLayout.CENTER);
-                                    me.startGame(frame, selectGamePanel, tictactoePanel);
+                                    me.startGame(frame);
                                 }
                                 else if(json.getString("requestType").equals("sendWin")){
                                     gewonnen.setText("Server has Won!");
@@ -108,8 +117,6 @@ public class App{
                 }).start();
             }
         });
-        selectGamePanel.add(connectButton);
-        connectButton.setBounds(50, 165, 200, 30);
         
  ///////////////////////////////////////////////////////////////////////////////////////Host Game\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         
@@ -124,9 +131,8 @@ public class App{
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
-                            me.drawBoard(p2, frame);
                             tictactoePanel.add(p2, BorderLayout.CENTER);
-                            me.startGame(frame, selectGamePanel, tictactoePanel);
+                            me.startGame(frame);
                         }
                         @Override
                         public void onError(WebSocket Client, Exception e){
@@ -166,6 +172,9 @@ public class App{
                 selectGamePanel.remove(boardScrollBar);
                 selectGamePanel.add(connectionInfo);
                 connectionInfo.setBounds(50, 70, 500, 20);
+                selectGamePanel.remove(ipAddressInput);
+                selectGamePanel.remove(portAddressInput);
+                selectGamePanel.remove(connectButton);
                 try {
                     connectionInfo.setText(InetAddress.getLocalHost() + ":8080");
                 } catch (Exception ex) {
@@ -179,62 +188,65 @@ public class App{
         tictactoePanel.setLayout(new BorderLayout());
 
         JPanel p1 = new JPanel(); 
-        p1.setBounds(0,0,290,70); 
         p1.setLayout(null);
 
         JLabel spieler = new JLabel("Spieler 1");
         JLabel verbunden = new JLabel("Nicht Verbunden");
         JLabel istDran = new JLabel("Aktuell am Zug... ");
 
-        p1.add(spieler); spieler.setBounds(10,10,200,20);
-        p1.add(verbunden); verbunden.setBounds(10,30,200,20);
-        p1.add(istDran); istDran.setBounds(10,50,200,20);
+        p1.add(spieler); 
+        spieler.setBounds(10,10,200,20);
+        p1.add(verbunden); 
+        verbunden.setBounds(10,30,200,20);
+        p1.add(istDran); 
+        istDran.setBounds(10,50,200,20);
 
         tictactoePanel.add(p1, BorderLayout.NORTH);
 
 
         JPanel p3 = new JPanel(); 
-        p3.setBounds(0,280,290,200); 
-        p3.add(gewonnen); gewonnen.setBounds(10,10,200,20);
+        p3.add(gewonnen); 
+        gewonnen.setBounds(10,10,200,20);
 
         tictactoePanel.add(p3, BorderLayout.SOUTH);
-
-        frame.add(selectGamePanel);
-        selectGamePanel.setBounds(0,0, 1000, 1000);
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 400);
     }
 
-    public void startGame(JFrame frame, JPanel selectGamePanel, JPanel tictactoePanel){
+    public void startGame(JFrame frame){
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
-        frame.setSize((90 * boardDimenions) + 10, (90 * boardDimenions) + 100);
-    }
-    public void sendMove(int i, int j){
-        JSONObject sendMove = new JSONObject();
-        sendMove.put("requestType", "Move");
-        sendMove.put("xCord", j);
-        sendMove.put("yCord", i);
-
-        if(client != null){
-            client.send(sendMove.toString());
+        jbutton = new JButton[boardDimenions][boardDimenions];
+        p2.setLayout(new GridLayout(0,boardDimenions,5,5));
+        for (int i = 0;i < boardDimenions; i++ ) {
+            for (int j = 0; j < boardDimenions; j++){
+                jbutton[i][j] = new JButton();
+                p2.add(jbutton[i][j]);
+                jbutton[i][j].addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {      
+                        if (player == true) {
+                            for(int i = 0; i < boardDimenions; i++){
+                                for(int j = 0; j < boardDimenions; j++){
+                                    if (jbutton[i][j] == (JButton) e.getSource()) {
+                                        jbutton[i][j].setBackground(Color.BLUE);
+                                        jbutton[i][j].setEnabled(false);
+                                        jbutton[i][j].setText("X");
+                                        player = false;
+                                        sendMove(i, j);
+                                        WinCheck(i, j, boardDimenions);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
         }
-        else{
-            server.broadcast(sendMove.toString());  
-        }
+        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1) + 200),   ((80*boardDimenions) + (5* boardDimenions - 1)));
     }
-    public void syncMove(JSONObject json){
-        int j = json.getInt("xCord");
-        int i = json.getInt("yCord");
-        jbutton[i][j].setBackground(Color.RED);
-        jbutton[i][j].setEnabled(false);
-        jbutton[i][j].setText("O");
-        player = true;
-
-    }
-    public void WinCheck(int x, int y, int boardDimenions){
+    public void sendMove(int x, int y){
         moveCount++;
         for(int i = 0; i < boardDimenions; i++){
             if(jbutton[x][i].getText() != "X")
@@ -269,8 +281,32 @@ public class App{
             }
         }
         if(moveCount == (Math.pow(boardDimenions, 2) - 1)){
-            sendWin(jbutton, gewonnen);
+            gewonnen.setText("draw");
         }
+
+        JSONObject sendMove = new JSONObject();
+        sendMove.put("requestType", "Move");
+        sendMove.put("xCord", x);
+        sendMove.put("yCord", y);
+
+        if(client != null){
+            client.send(sendMove.toString());
+        }
+        else{
+            server.broadcast(sendMove.toString());  
+        }
+    }
+    public void syncMove(JSONObject json){
+        int j = json.getInt("xCord");
+        int i = json.getInt("yCord");
+        jbutton[i][j].setBackground(Color.RED);
+        jbutton[i][j].setEnabled(false);
+        jbutton[i][j].setText("O");
+        player = true;
+
+    }
+    public void WinCheck(int x, int y, int boardDimenions){
+
     }
     public void syncBoardDimensions(int boardDimenions){
         JSONObject syncBoardDimensions = new JSONObject();
@@ -280,35 +316,6 @@ public class App{
         server.broadcast(syncBoardDimensions.toString());
     }
 
-    public void drawBoard(JPanel p2, JFrame frame){
-        jbutton = new JButton[boardDimenions][boardDimenions];
-        p2.setLayout(new GridLayout(0,boardDimenions,5,5));
-        for (int i = 0;i < boardDimenions; i++ ) {
-            for (int j = 0; j < boardDimenions; j++){
-                jbutton[i][j] = new JButton();
-                p2.add(jbutton[i][j]);
-                jbutton[i][j].addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {      
-                        if (player == true) {
-                            for(int i = 0; i < boardDimenions; i++){
-                                for(int j = 0; j < boardDimenions; j++){
-                                    if (jbutton[i][j] == (JButton) e.getSource()) {
-                                        jbutton[i][j].setBackground(Color.BLUE);
-                                        jbutton[i][j].setEnabled(false);
-                                        jbutton[i][j].setText("X");
-                                        player = false;
-                                        sendMove(i, j);
-                                        WinCheck(i, j, boardDimenions);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1) + 200),   ((80*boardDimenions) + (5* boardDimenions - 1)));
-    }
     public void sendWin(JButton[][] jbutton, JLabel winner){
         JSONObject sendWin = new JSONObject();
         sendWin.put("requestType", "sendWin");
