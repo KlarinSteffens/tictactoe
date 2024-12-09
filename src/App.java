@@ -189,6 +189,7 @@ public class App{
 
         JPanel p1 = new JPanel(); 
         p1.setLayout(null);
+        p1.setSize(new Dimension(((80*boardDimenions) + (5* boardDimenions - 1)), 100));
 
         JLabel spieler = new JLabel("Spieler 1");
         JLabel verbunden = new JLabel("Nicht Verbunden");
