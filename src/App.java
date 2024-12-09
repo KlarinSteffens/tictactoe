@@ -88,6 +88,11 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("sendWin")){
                                     gewonnen.setText("Server has Won!");
+                                    for(int i = 0; i < boardDimenions; i++){
+                                        for(int j = 0; j < boardDimenions; j++){
+                                                jbutton[i][j].setEnabled(false);
+                                        }
+                                    }
                                 }
                             }
                             @Override
@@ -139,6 +144,11 @@ public class App{
                             }
                             else if(json.getString("requestType").equals("sendWin")){
                                 gewonnen.setText("Client has Won!");
+                                for(int i = 0; i < boardDimenions; i++){
+                                    for(int j = 0; j < boardDimenions; j++){
+                                            jbutton[i][j].setEnabled(false);
+                                    }
+                                }
                             }
                         }
                         @Override
