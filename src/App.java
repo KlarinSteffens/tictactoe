@@ -230,14 +230,14 @@ public class App{
             if(jbutton[x][i].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                sendWin();
+                sendWin(jbutton, gewonnen);
             }
         }
         for(int i = 0; i <boardDimenions; i++){
             if(jbutton[i][y].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                sendWin();
+                sendWin(jbutton, gewonnen);
             }
         }
         if(x == y){
@@ -245,7 +245,7 @@ public class App{
                 if(jbutton[i][i].getText() != "X")
                     break;
                 if(i == boardDimenions-1){
-                    sendWin();
+                    sendWin(jbutton, gewonnen);
                 }
             }
         }
@@ -254,12 +254,12 @@ public class App{
                 if(jbutton[i][(boardDimenions - 1) - i].getText() != "X")
                     break;
                 if(i == boardDimenions -1){
-                    sendWin();
+                    sendWin(jbutton, gewonnen);
                 }
             }
         }
         if(moveCount == (Math.pow(boardDimenions, 2) - 1)){
-            sendWin();
+            sendWin(jbutton, gewonnen);
         }
     }
     public void syncBoardDimensions(int boardDimenions){
@@ -299,7 +299,7 @@ public class App{
         }
         frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1) + 200),   ((80*boardDimenions) + (5* boardDimenions - 1)));
     }
-    public void sendWin(){
+    public void sendWin(JButton[][] jbutton, JLabel winner){
         JSONObject sendWin = new JSONObject();
         sendWin.put("requestType", "sendWin");
 
@@ -309,6 +309,13 @@ public class App{
         else{
             server.broadcast(sendWin.toString());  
         }
+
+        for(int i = 0; i < boardDimenions; i++){
+            for(int j = 0; j < boardDimenions; j++){
+                    jbutton[i][j].setEnabled(false);
+            }
+        }
+        winner.setText("You have won");
     }
 }
 
