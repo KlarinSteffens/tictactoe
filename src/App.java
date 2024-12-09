@@ -235,7 +235,6 @@ public class App{
                                         jbutton[i][j].setText("X");
                                         player = false;
                                         sendMove(i, j);
-                                        WinCheck(i, j, boardDimenions);
                                     }
                                 }
                             }
@@ -244,7 +243,7 @@ public class App{
                 });
             }
         }
-        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1) + 200),   ((80*boardDimenions) + (5* boardDimenions - 1)));
+        frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1)), (((80*boardDimenions) + (5* boardDimenions - 1)) + 400));
     }
     public void sendMove(int x, int y){
         moveCount++;
@@ -286,8 +285,8 @@ public class App{
 
         JSONObject sendMove = new JSONObject();
         sendMove.put("requestType", "Move");
-        sendMove.put("xCord", x);
-        sendMove.put("yCord", y);
+        sendMove.put("xCord", y);
+        sendMove.put("yCord", x);
 
         if(client != null){
             client.send(sendMove.toString());
@@ -303,9 +302,6 @@ public class App{
         jbutton[i][j].setEnabled(false);
         jbutton[i][j].setText("O");
         player = true;
-
-    }
-    public void WinCheck(int x, int y, int boardDimenions){
 
     }
     public void syncBoardDimensions(int boardDimenions){
