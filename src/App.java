@@ -75,7 +75,7 @@ public class App{
                             @Override
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
-                                frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
+                                frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions);
                             }
                             @Override
                             public void onError(Exception e){
@@ -139,7 +139,7 @@ public class App{
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
-                            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
+                            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions);
                             tictactoePanel.add(p2, BorderLayout.CENTER);
                             me.startGame(frame);
                         }
@@ -288,10 +288,10 @@ public class App{
         player = true;
 
         if (client != null) {
-            gewonnen.setText("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
+            gewonnen.setText("its your turn");
         }
         else{
-            gewonnen.setText("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
+            gewonnen.setText("its Clients turn");
         }
 
     }
