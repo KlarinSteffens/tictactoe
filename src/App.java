@@ -210,6 +210,7 @@ public class App{
             for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
                 p2.add(jbutton[i][j]);
+                jbutton[i][j].setFont(new Font("Sans-Serif", Font.BOLD, 20));
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
                         if (player == true) {
@@ -219,7 +220,6 @@ public class App{
                                         jbutton[i][j].setBackground(Color.BLUE);
                                         jbutton[i][j].setEnabled(false);
                                         jbutton[i][j].setText("X");
-                                        jbutton[i][j].setFont(new Font("Serif", Font.PLAIN, 14));
                                         player = false;
                                         gewonnen.setText("its the opponents turn");
                                         sendMove(i, j);
