@@ -219,6 +219,7 @@ public class App{
                                         jbutton[i][j].setBackground(Color.BLUE);
                                         jbutton[i][j].setEnabled(false);
                                         jbutton[i][j].setText("X");
+                                        jbutton[i][j].setFont(new Font("Serif", Font.PLAIN, 14));
                                         player = false;
                                         gewonnen.setText("its the opponents turn");
                                         sendMove(i, j);
