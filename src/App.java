@@ -75,6 +75,7 @@ public class App{
                             @Override
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
+                                frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
                             }
                             @Override
                             public void onError(Exception e){
@@ -87,7 +88,7 @@ public class App{
                                 JSONObject json = new JSONObject(Message);
 
                                 if(json.getString("requestType").equals("Move")){
-                                    me.syncMove(json);
+                                    me.syncMove(json, frame);
                                     moveCount++;
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
@@ -125,12 +126,20 @@ public class App{
         hostButton.setBounds(50, 30, 200, 30);
         hostButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                player = false;
+                selectGamePanel.remove(boardScrollBar);
+                selectGamePanel.remove(ipAddressInput);
+                selectGamePanel.remove(portAddressInput);
+                selectGamePanel.remove(connectButton);
+                selectGamePanel.add(connectionInfo);
+                connectionInfo.setBounds(50, 70, 500, 20);
                 new Thread(() -> {
                     System.out.println("[Server] Starting...");
                     server = new WebSocketServer(new InetSocketAddress(8080)) {
                         @Override
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
+                            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
                             tictactoePanel.add(p2, BorderLayout.CENTER);
                             me.startGame(frame);
                         }
@@ -145,7 +154,7 @@ public class App{
                             JSONObject json = new JSONObject(Message);
 
                             if(json.getString("requestType").equals("Move")){
-                                me.syncMove(json);
+                                me.syncMove(json, frame);
                                 moveCount++;
                             }
                             else if(json.getString("requestType").equals("sendWin")){
@@ -168,13 +177,6 @@ public class App{
                     };
                     server.start();
                 }).start();
-                player = false;
-                selectGamePanel.remove(boardScrollBar);
-                selectGamePanel.add(connectionInfo);
-                connectionInfo.setBounds(50, 70, 500, 20);
-                selectGamePanel.remove(ipAddressInput);
-                selectGamePanel.remove(portAddressInput);
-                selectGamePanel.remove(connectButton);
                 try {
                     connectionInfo.setText(InetAddress.getLocalHost() + ":8080");
                 } catch (Exception ex) {
@@ -194,7 +196,7 @@ public class App{
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 400);
+        frame.setSize(320, 300);
     }
 
     public void startGame(JFrame frame){
@@ -277,13 +279,20 @@ public class App{
             server.broadcast(sendMove.toString());  
         }
     }
-    public void syncMove(JSONObject json){
+    public void syncMove(JSONObject json, JFrame frame){
         int j = json.getInt("xCord");
         int i = json.getInt("yCord");
         jbutton[i][j].setBackground(Color.RED);
         jbutton[i][j].setEnabled(false);
         jbutton[i][j].setText("O");
         player = true;
+
+        if (client != null) {
+            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
+        }
+        else{
+            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
+        }
 
     }
     public void syncBoardDimensions(int boardDimenions){
