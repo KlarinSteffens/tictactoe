@@ -88,7 +88,7 @@ public class App{
                                 JSONObject json = new JSONObject(Message);
 
                                 if(json.getString("requestType").equals("Move")){
-                                    me.syncMove(json, frame);
+                                    me.syncMove(json);
                                     moveCount++;
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
@@ -154,7 +154,7 @@ public class App{
                             JSONObject json = new JSONObject(Message);
 
                             if(json.getString("requestType").equals("Move")){
-                                me.syncMove(json, frame);
+                                me.syncMove(json);
                                 moveCount++;
                             }
                             else if(json.getString("requestType").equals("sendWin")){
@@ -279,7 +279,7 @@ public class App{
             server.broadcast(sendMove.toString());  
         }
     }
-    public void syncMove(JSONObject json, JFrame frame){
+    public void syncMove(JSONObject json){
         int j = json.getInt("xCord");
         int i = json.getInt("yCord");
         jbutton[i][j].setBackground(Color.RED);
@@ -288,10 +288,10 @@ public class App{
         player = true;
 
         if (client != null) {
-            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
+            gewonnen.setText("TicTacToe " + boardDimenions + "x" + boardDimenions + "its your turn");
         }
         else{
-            frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
+            gewonnen.setText("TicTacToe " + boardDimenions + "x" + boardDimenions + "its Clients turn");
         }
 
     }
