@@ -233,6 +233,18 @@ public class App{
         frame.setSize(((80*boardDimenions) + (5* boardDimenions - 1)), (((80*boardDimenions) + (5* boardDimenions - 1)) + 40));
     }
     public void sendMove(int x, int y){
+        JSONObject sendMove = new JSONObject();
+        sendMove.put("requestType", "Move");
+        sendMove.put("xCord", y);
+        sendMove.put("yCord", x);
+
+        if(client != null){
+            client.send(sendMove.toString());
+        }
+        else{
+            server.broadcast(sendMove.toString());  
+        }
+
         moveCount++;
         for(int i = 0; i < boardDimenions; i++){
             if(jbutton[x][i].getText() != "X")
@@ -268,18 +280,6 @@ public class App{
         }
         if(moveCount == (Math.pow(boardDimenions, 2) - 1)){
             gewonnen.setText("draw");
-        }
-
-        JSONObject sendMove = new JSONObject();
-        sendMove.put("requestType", "Move");
-        sendMove.put("xCord", y);
-        sendMove.put("yCord", x);
-
-        if(client != null){
-            client.send(sendMove.toString());
-        }
-        else{
-            server.broadcast(sendMove.toString());  
         }
     }
     public void syncMove(JSONObject json){
