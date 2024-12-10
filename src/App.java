@@ -129,9 +129,9 @@ public class App{
             public void actionPerformed(ActionEvent e) {
                 player = false;
                 selectGamePanel.remove(boardScrollBar);
-                selectGamePanel.remove(ipAddressInput);
-                selectGamePanel.remove(portAddressInput);
-                selectGamePanel.remove(connectButton);
+                ipAddressInput.setOpaque(true);
+                portAddressInput.setOpaque(true);
+                connectButton.setOpaque(true);
                 selectGamePanel.add(connectionInfo);
                 connectionInfo.setBounds(50, 70, 500, 20);
                 new Thread(() -> {
@@ -190,6 +190,9 @@ public class App{
 
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         tictactoePanel.setLayout(new BorderLayout());
+
+        p2.setMaximumSize(new Dimension(1920, 1080));
+
         JPanel p3 = new JPanel(); 
         p3.add(gewonnen); 
         gewonnen.setBounds(10,10,200,20);
@@ -211,6 +214,7 @@ public class App{
                 jbutton[i][j] = new JButton();
                 p2.add(jbutton[i][j]);
                 jbutton[i][j].setFont(new Font("Sans-Serif", Font.BOLD, 20));
+                jbutton[i][j].setFocusable(false);
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
                         if (player == true) {
@@ -321,3 +325,21 @@ public class App{
     }
 }
 
+
+/*
+neu Technicken:
+- JScrollBar()
+- GridLayout()
+- BorderLayout()
+
+neue Methoden:
+- setFont()
+- connectBlocking()
+- broadcast()
+- send()
+- put()
+- remove()
+- adjustmentListener()
+- getLocalHost()
+- setFocusable
+*/
