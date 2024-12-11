@@ -35,6 +35,12 @@ public class App{
         App me = new App();
         
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+        try {
+            // Set a cross-platform look-and-feel (Nimbus)
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         selectGamePanel.setLayout(null);
         JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
@@ -129,9 +135,6 @@ public class App{
             public void actionPerformed(ActionEvent e) {
                 player = false;
                 selectGamePanel.remove(boardScrollBar);
-                ipAddressInput.setOpaque(true);
-                portAddressInput.setOpaque(true);
-                connectButton.setOpaque(true);
                 selectGamePanel.add(connectionInfo);
                 connectionInfo.setBounds(50, 70, 500, 20);
                 new Thread(() -> {
@@ -214,6 +217,7 @@ public class App{
                 jbutton[i][j] = new JButton();
                 p2.add(jbutton[i][j]);
                 jbutton[i][j].setFont(new Font("Sans-Serif", Font.BOLD, 20));
+                jbutton[i][j].setOpaque(true);
                 jbutton[i][j].setFocusable(false);
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
