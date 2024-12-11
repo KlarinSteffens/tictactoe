@@ -35,13 +35,6 @@ public class App{
         App me = new App();
         
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-        try {
-            // Set a cross-platform look-and-feel (Nimbus)
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         selectGamePanel.setLayout(null);
         JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
         selectGamePanel.add(boardDimensionLabel);
@@ -219,6 +212,7 @@ public class App{
                 jbutton[i][j].setFont(new Font("Sans-Serif", Font.BOLD, 20));
                 jbutton[i][j].setOpaque(true);
                 jbutton[i][j].setFocusable(false);
+                jbutton[i][j].setRolloverEnabled(false);
                 jbutton[i][j].addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {      
                         if (player == true) {
