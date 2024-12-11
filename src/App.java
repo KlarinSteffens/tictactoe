@@ -22,11 +22,11 @@ public class App{
         
     static JPanel selectGamePanel = new JPanel();
     static JPanel tictactoePanel = new JPanel();
-    static JPanel p2 = new JPanel(); 
+    static JPanel gameBoardPanel = new JPanel(); 
 
     static JButton jbutton[][] = new JButton[3][3];
     static JLabel connectionInfo = new JLabel();
-    static JLabel gewonnen = new JLabel("Gewonnen hat... ");
+    static JLabel turnInfo = new JLabel("Gewonnen hat... ");
     static JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
 
     public static void main(String[] args) {
@@ -36,7 +36,7 @@ public class App{
         
 ///////////////////////////////////////////////////////////////////////////////////////Connection Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         selectGamePanel.setLayout(null);
-        JLabel boardDimensionLabel = new JLabel("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
+        JLabel boardDimensionLabel = new JLabel("Board dimensions = " + boardDimenions + "x" + boardDimenions);
         selectGamePanel.add(boardDimensionLabel);
         boardDimensionLabel.setBounds(50,100, 400, 30);
 
@@ -44,7 +44,7 @@ public class App{
         boardScrollBar.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 boardDimenions = e.getValue();
-                boardDimensionLabel.setText("Bord Dimension = " + boardDimenions + "x" + boardDimenions);
+                boardDimensionLabel.setText("Board Dimensions = " + boardDimenions + "x" + boardDimenions);
             }
         });
         boardScrollBar.setBounds(50, 70, 200, 20);
@@ -75,7 +75,7 @@ public class App{
                             public void onOpen(ServerHandshake handshakeData){
                                 System.out.println("[Client] Connection Successfull");
                                 frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions);
-                                gewonnen.setText("its your turn");
+                                turnInfo.setText("its your turn");
                             }
                             @Override
                             public void onError(Exception e){
@@ -93,11 +93,11 @@ public class App{
                                 }
                                 else if(json.getString("requestType").equals("syncBoard")){
                                     boardDimenions = json.getInt("size");
-                                    tictactoePanel.add(p2, BorderLayout.CENTER);
+                                    tictactoePanel.add(gameBoardPanel, BorderLayout.CENTER);
                                     me.startGame(frame);
                                 }
                                 else if(json.getString("requestType").equals("sendWin")){
-                                    gewonnen.setText("Server has Won!");
+                                    turnInfo.setText("Server has Won!");
                                     for(int i = 0; i < boardDimenions; i++){
                                         for(int j = 0; j < boardDimenions; j++){
                                                 jbutton[i][j].setEnabled(false);
@@ -137,8 +137,8 @@ public class App{
                         public void onOpen(WebSocket newClient, ClientHandshake handshake) {
                             me.syncBoardDimensions(boardDimenions);
                             frame.setTitle("TicTacToe " + boardDimenions + "x" + boardDimenions);
-                            gewonnen.setText("its the opponents turn");
-                            tictactoePanel.add(p2, BorderLayout.CENTER);
+                            turnInfo.setText("its the opponents turn");
+                            tictactoePanel.add(gameBoardPanel, BorderLayout.CENTER);
                             me.startGame(frame);
                         }
                         @Override
@@ -156,7 +156,7 @@ public class App{
                                 moveCount++;
                             }
                             else if(json.getString("requestType").equals("sendWin")){
-                                gewonnen.setText("Client has Won!");
+                                turnInfo.setText("Client has Won!");
                                 for(int i = 0; i < boardDimenions; i++){
                                     for(int j = 0; j < boardDimenions; j++){
                                             jbutton[i][j].setEnabled(false);
@@ -187,13 +187,13 @@ public class App{
 ///////////////////////////////////////////////////////////////////////////////////////Game Panel\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
         tictactoePanel.setLayout(new BorderLayout());
 
-        p2.setMaximumSize(new Dimension(1920, 1080));
+        gameBoardPanel.setMaximumSize(new Dimension(1920, 1080));
 
-        JPanel p3 = new JPanel(); 
-        p3.add(gewonnen); 
-        gewonnen.setBounds(10,10,200,20);
+        JPanel infoPanel = new JPanel(); 
+        infoPanel.add(turnInfo); 
+        turnInfo.setBounds(10,10,200,20);
 
-        tictactoePanel.add(p3, BorderLayout.SOUTH);
+        tictactoePanel.add(infoPanel, BorderLayout.SOUTH);
 
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -204,11 +204,11 @@ public class App{
         frame.add(tictactoePanel);
         frame.remove(selectGamePanel);
         jbutton = new JButton[boardDimenions][boardDimenions];
-        p2.setLayout(new GridLayout(0,boardDimenions,5,5));
+        gameBoardPanel.setLayout(new GridLayout(0,boardDimenions,5,5));
         for (int i = 0;i < boardDimenions; i++ ) {
             for (int j = 0; j < boardDimenions; j++){
                 jbutton[i][j] = new JButton();
-                p2.add(jbutton[i][j]);
+                gameBoardPanel.add(jbutton[i][j]);
                 jbutton[i][j].setFont(new Font("Sans-Serif", Font.BOLD, 20));
                 jbutton[i][j].setOpaque(true);
                 jbutton[i][j].setFocusable(false);
@@ -223,7 +223,7 @@ public class App{
                                         jbutton[i][j].setEnabled(false);
                                         jbutton[i][j].setText("X");
                                         player = false;
-                                        gewonnen.setText("its the opponents turn");
+                                        turnInfo.setText("its the opponents turn");
                                         sendMove(i, j);
                                     }
                                 }
@@ -253,14 +253,14 @@ public class App{
             if(jbutton[x][i].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                sendWin(jbutton, gewonnen);
+                sendWin(jbutton, turnInfo);
             }
         }
         for(int i = 0; i <boardDimenions; i++){
             if(jbutton[i][y].getText() != "X")
                 break;
             if(i == boardDimenions - 1){
-                sendWin(jbutton, gewonnen);
+                sendWin(jbutton, turnInfo);
             }
         }
         if(x == y){
@@ -268,7 +268,7 @@ public class App{
                 if(jbutton[i][i].getText() != "X")
                     break;
                 if(i == boardDimenions-1){
-                    sendWin(jbutton, gewonnen);
+                    sendWin(jbutton, turnInfo);
                 }
             }
         }
@@ -277,12 +277,12 @@ public class App{
                 if(jbutton[i][(boardDimenions - 1) - i].getText() != "X")
                     break;
                 if(i == boardDimenions -1){
-                    sendWin(jbutton, gewonnen);
+                    sendWin(jbutton, turnInfo);
                 }
             }
         }
         if(moveCount == (Math.pow(boardDimenions, 2) - 1)){
-            gewonnen.setText("draw");
+            turnInfo.setText("draw");
         }
     }
     public void syncMove(JSONObject json){
@@ -293,7 +293,7 @@ public class App{
         jbutton[i][j].setText("O");
         player = true;
 
-        gewonnen.setText("its your turn");
+        turnInfo.setText("its your turn");
     }
     public void syncBoardDimensions(int boardDimenions){
         JSONObject syncBoardDimensions = new JSONObject();
