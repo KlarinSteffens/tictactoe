@@ -27,7 +27,7 @@ public class App{
     static JButton jbutton[][] = new JButton[3][3];
     static JLabel connectionInfo = new JLabel();
     static JLabel turnInfo = new JLabel("Gewonnen hat... ");
-    static JScrollBar boardScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
+    static JScrollBar boardDimensionsScrollBar = new JScrollBar(Scrollbar.HORIZONTAL, 3, 1, 3, 10);
 
     public static void main(String[] args) {
         
@@ -40,14 +40,14 @@ public class App{
         selectGamePanel.add(boardDimensionLabel);
         boardDimensionLabel.setBounds(50,100, 400, 30);
 
-        selectGamePanel.add(boardScrollBar);
-        boardScrollBar.addAdjustmentListener(new AdjustmentListener() {
+        selectGamePanel.add(boardDimensionsScrollBar);
+        boardDimensionsScrollBar.addAdjustmentListener(new AdjustmentListener() {
             public void adjustmentValueChanged(AdjustmentEvent e) {
                 boardDimenions = e.getValue();
                 boardDimensionLabel.setText("Board Dimensions = " + boardDimenions + "x" + boardDimenions);
             }
         });
-        boardScrollBar.setBounds(50, 70, 200, 20);
+        boardDimensionsScrollBar.setBounds(50, 70, 200, 20);
 
         JTextField ipAddressInput = new JTextField();
         selectGamePanel.add(ipAddressInput);
@@ -127,7 +127,7 @@ public class App{
         hostButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 player = false;
-                selectGamePanel.remove(boardScrollBar);
+                selectGamePanel.remove(boardDimensionsScrollBar);
                 selectGamePanel.add(connectionInfo);
                 connectionInfo.setBounds(50, 70, 500, 20);
                 new Thread(() -> {
