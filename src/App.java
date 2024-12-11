@@ -345,5 +345,6 @@ neue Methoden:
 - remove()
 - adjustmentListener()
 - getLocalHost()
-- setFocusable
+- setFocusable()
+- setOpaque()
 */
